@@ -42,13 +42,24 @@ export default class NodeTree extends Component {
             this.setState({selected: selected.childs[0]})
           } else if (selected.nextNode){
             this.setState({selected: selected.nextNode})
+          } else if (selected.parentNode.nextNode) {
+            this.setState({selected: selected.parentNode.nextNode})
           }
           break
         case "ArrowUp":
           if (!selected) {
             this.setState({selected: this.state.nodes[0]})
           } else if (selected.prevNode) {
-            this.setState({selected: selected.prevNode})
+            if (!selected.prevNode.isOpen) {
+              this.setState({selected: selected.prevNode})
+             } else {
+              const last_parent_child = selected.prevNode.childs.length - 1
+              this.setState({selected: selected.prevNode.childs[last_parent_child]})
+            }
+          } else {
+            if (selected.parentNode) {
+              this.setState({selected: selected.parentNode})
+            }
           }
           break
         case "ArrowLeft":
