@@ -5,7 +5,6 @@ export default class NodeElement extends Component {
     super(props)
     this.state = {
       node: props.node,
-      isOpen: props.isOpen,
       selected: props.selected,
       updateSelected: props.updateSelected
     }
@@ -14,16 +13,16 @@ export default class NodeElement extends Component {
   }
 
   handleNodeClick() {
-    this.setState({isOpen: !this.state.isOpen})
+    this.state.node.isOpen = !this.state.node.isOpen
     this.props.updateSelected(this.state.node)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({selected: nextProps.selected})
+    this.setState({selected: nextProps.selected, isOpen: nextProps.isOpen})
   }
 
   render() {
-    const {isOpen} = this.state
+    const {isOpen} = this.state.node
     let classNameHeader = 'node-tree__node-header'
     if (this.state.selected && this.state.selected.id === this.state.node.id) {
       classNameHeader += ' selected'

@@ -1,28 +1,9 @@
 import React, {Component} from 'react'
 
-import Node from '../models/Node.js'
+import {updateNodeWithId, genNodeMenu} from '../models/Node.js'
 import NodeElement from './NodeElement'
 import menu_api from '../menu_api.json'
 
-function genNodeMenu(data) {
-  let menu = []
-  for (let el of data) {
-    let node = new Node(el)
-    if (node.pages && node.pages.length) {
-      node.childs = genNodeMenu(node.pages)
-    }
-    menu.push(node)
-    if (menu.length > 1) {
-      menu[0].nextNode = menu[1]
-      menu[menu.length-1].prevNode = menu[menu.length-2]
-    }
-    for (let i = 1; i < menu.length-1; i++) {
-      menu[i].nextNode = menu[i+1]
-      menu[i].prevNode = menu[i-1]
-    }
-  }
-  return menu
-}
 
 export default class NodeTree extends Component {
   constructor(props) {
@@ -52,27 +33,50 @@ export default class NodeTree extends Component {
 
   keyboardHandler(e) {
     if (document.activeElement.tagName === "BODY") {
+      const selected = this.state.selected
       switch (e.key) {
         case "ArrowDown":
-          if (!this.state.selected) {
+          if (!selected) {
             this.setState({selected: this.state.nodes[0]})
-          } else if (this.state.selected.nextNode) {
-            this.setState({selected: this.state.selected.nextNode})
+          } else if (selected.isOpen && selected.childs.length) {
+            this.setState({selected: selected.childs[0]})
+          } else if (selected.nextNode){
+            this.setState({selected: selected.nextNode})
           }
           break
         case "ArrowUp":
-          if (!this.state.selected) {
+          if (!selected) {
             this.setState({selected: this.state.nodes[0]})
-          } else if (this.state.selected.prevNode) {
-            this.setState({selected: this.state.selected.prevNode})
+          } else if (selected.prevNode) {
+            this.setState({selected: selected.prevNode})
           }
           break
         case "ArrowLeft":
+          if (!selected) {
+            this.setState({selected: this.state.nodes[0]})
+          } else if (selected.childs.length && selected.isOpen) {
+            let nodes = this.state.nodes
+            const new_node_state = {...selected, isOpen: !selected.isOpen}
+            updateNodeWithId(nodes, selected, new_node_state)
+            this.setState({nodes})
+          } else if (selected.parentNode) {
+            this.setState({selected: selected.parentNode})
+          }
           break
         case "ArrowRight":
+          if (!selected) {
+            this.setState({selected: this.state.nodes[0]})
+          } else if (selected.childs.length) {
+            let nodes = this.state.nodes
+            const new_node_state = {...selected, isOpen: !selected.isOpen}
+            updateNodeWithId(nodes, selected, new_node_state)
+            this.setState({nodes})
+          }
           break
         default:
       }
+    } else {
+      console.log(document.activeElement.tagName)
     }
   }
 
@@ -87,6 +91,7 @@ export default class NodeTree extends Component {
                       node={node}
                       key={node.id}
                       selected={selected}
+                      isOpen={node.isOpen}
                       updateSelected={this.updateSelected}/>
           })
         }
