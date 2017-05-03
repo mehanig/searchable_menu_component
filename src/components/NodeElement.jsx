@@ -15,7 +15,7 @@ export default class NodeElement extends Component {
 
   handleNodeClick() {
     this.setState({isOpen: !this.state.isOpen})
-    this.props.updateSelected(this.state.node.id)
+    this.props.updateSelected(this.state.node)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,7 +25,7 @@ export default class NodeElement extends Component {
   render() {
     const {isOpen} = this.state
     let classNameHeader = 'node-tree__node-header'
-    if (this.state.selected === this.state.node.id) {
+    if (this.state.selected && this.state.selected.id === this.state.node.id) {
       classNameHeader += ' selected'
     }
     if (isOpen) {

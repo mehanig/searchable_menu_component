@@ -12,6 +12,14 @@ function genNodeMenu(data) {
       node.childs = genNodeMenu(node.pages)
     }
     menu.push(node)
+    if (menu.length > 1) {
+      menu[0].nextNode = menu[1]
+      menu[menu.length-1].prevNode = menu[menu.length-2]
+    }
+    for (let i = 1; i < menu.length-1; i++) {
+      menu[i].nextNode = menu[i+1]
+      menu[i].prevNode = menu[i-1]
+    }
   }
   return menu
 }
@@ -19,14 +27,18 @@ function genNodeMenu(data) {
 export default class NodeTree extends Component {
   constructor(props) {
     super(props)
-    this.state = {nodes: genNodeMenu(menu_api), isLoading: false, selected: props.selected}
+    this.state = {
+      nodes: genNodeMenu(menu_api),
+      isLoading: false,
+      selected: props.selected
+    }
 
     this.updateSelected = this.updateSelected.bind(this)
     this.keyboardHandler = this.keyboardHandler.bind(this)
   }
 
-  updateSelected(id) {
-    this.setState({selected: id})
+  updateSelected(node) {
+    this.setState({selected: node})
   }
 
   componentDidMount() {
@@ -42,8 +54,18 @@ export default class NodeTree extends Component {
     if (document.activeElement.tagName === "BODY") {
       switch (e.key) {
         case "ArrowDown":
+          if (!this.state.selected) {
+            this.setState({selected: this.state.nodes[0]})
+          } else if (this.state.selected.nextNode) {
+            this.setState({selected: this.state.selected.nextNode})
+          }
           break
         case "ArrowUp":
+          if (!this.state.selected) {
+            this.setState({selected: this.state.nodes[0]})
+          } else if (this.state.selected.prevNode) {
+            this.setState({selected: this.state.selected.prevNode})
+          }
           break
         case "ArrowLeft":
           break
@@ -54,7 +76,7 @@ export default class NodeTree extends Component {
     }
   }
 
-  
+
   render() {
     const {nodes, selected} = this.state
     return (

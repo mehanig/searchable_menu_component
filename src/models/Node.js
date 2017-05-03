@@ -5,5 +5,7 @@ export default class Node {
     this.url = url
     this.pages = pages
     this.childs = []
+    this.nextNode = null
+    this.prevNode = null
   }
 }
