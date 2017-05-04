@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 
 import NodeTree from './NodeTree'
 import SearchNode from './SearchNode'
-import {findNodesByText} from '../models/Node'
+import {findNodesByText, Node} from '../models/Node'
+import PropTypes from 'prop-types';
 
 export default class SearchableMenu extends Component {
   constructor(props) {
@@ -52,9 +53,22 @@ export default class SearchableMenu extends Component {
       <div className="searchable-menu">
         <SearchNode makeSearch={this.makeSearch}/>
         <div className="node-tree" onScroll={this.scrollCapture}>
-          {this.state.search_result ? <NodeTree nodes={this.state.search_result}/> : <NodeTree nodes={this.state.nodes}/>}
+          {this.state.search_result ?
+            <NodeTree nodes={this.state.search_result}
+                      highlight={this.props.highlighted}
+                      keyboard={this.props.keyboarded}/>
+            :
+            <NodeTree nodes={this.state.nodes}
+                      keyboard={this.props.keyboarded}/>
+          }
         </div>
       </div>
     )
   }
+}
+
+SearchableMenu.PropTypes = {
+  nodes: PropTypes.arrayOf(PropTypes.instanceOf(Node)).isRequired,
+  keyboarded: PropTypes.bool,
+  highlighted: PropTypes.bool
 }

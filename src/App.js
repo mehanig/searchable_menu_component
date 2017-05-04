@@ -15,7 +15,10 @@ class App extends Component {
         <div className="App-header">
           <h2>SearchableMenu Component implementation:</h2>
         </div>
-        <SearchableMenu nodes={nodes}/>
+        <SearchableMenu
+          nodes={nodes}
+          highlighted={true}
+          keyboarded={true}/>
       </div>
     );
   }

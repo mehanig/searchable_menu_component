@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
+import PropTypes from 'prop-types';
 
-import {updateNodeWithId } from '../models/Node.js'
+import {updateNodeWithId, Node } from '../models/Node.js'
 import NodeElement from './NodeElement'
 
 
@@ -22,11 +23,15 @@ export default class NodeTree extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener("keydown", this.keyboardHandler)
+    if (this.props.keyboard) {
+      window.addEventListener("keydown", this.keyboardHandler)
+    }
   }
 
   componentWillUnmount() {
-    window.removeEventListener("keydown", this.keyboardHandler)
+    if (this.props.keyboard) {
+      window.removeEventListener("keydown", this.keyboardHandler)
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,12 +43,12 @@ export default class NodeTree extends Component {
   }
 
   keyboardHandler(e) {
-    if (document.activeElement.tagName === "BODY") {
-      const selected = this.state.selected
+    if (this.props.keyboard && document.activeElement.tagName === "BODY") {
+      const {nodes, selected} = this.state
       switch (e.key) {
         case "ArrowDown":
           if (!selected) {
-            this.setState({selected: this.state.nodes[0]})
+            this.setState({selected: nodes[0]})
           } else if (selected.isOpen && selected.childs.length) {
             this.setState({selected: selected.childs[0]})
           } else if (selected.nextNode){
@@ -54,7 +59,7 @@ export default class NodeTree extends Component {
           break
         case "ArrowUp":
           if (!selected) {
-            this.setState({selected: this.state.nodes[0]})
+            this.setState({selected: nodes[0]})
           } else if (selected.prevNode) {
             if (!selected.prevNode.isOpen) {
               this.setState({selected: selected.prevNode})
@@ -70,9 +75,8 @@ export default class NodeTree extends Component {
           break
         case "ArrowLeft":
           if (!selected) {
-            this.setState({selected: this.state.nodes[0]})
+            this.setState({selected: nodes[0]})
           } else if (selected.childs.length && selected.isOpen) {
-            let nodes = this.state.nodes
             const new_node_state = {...selected, isOpen: !selected.isOpen}
             updateNodeWithId(nodes, selected, new_node_state)
             this.setState({nodes})
@@ -82,9 +86,8 @@ export default class NodeTree extends Component {
           break
         case "ArrowRight":
           if (!selected) {
-            this.setState({selected: this.state.nodes[0]})
+            this.setState({selected: nodes[0]})
           } else if (selected.childs.length) {
-            let nodes = this.state.nodes
             const new_node_state = {...selected, isOpen: !selected.isOpen}
             updateNodeWithId(nodes, selected, new_node_state)
             this.setState({nodes})
@@ -102,17 +105,29 @@ export default class NodeTree extends Component {
     return (
       <ul ref="menu_list" className="node-tree__main">
         {this.state.isLoading ? <div>Loading</div> :
-          nodes.map((node) => {
-            const key = [node.id, "_", node.childs.length].join()
+          nodes.map((el) => {
+            // use custom key to force React to rerender element in search_results
+            // (search_results and menu are different to display, and
+            // menu NodeElement elements should not be reused in search result list
+            const key = [el.id, "_", el.childs.length, "_", el.marked_start, "_", el.marked_length].join()
             return <NodeElement
                       key={key}
-                      node={node}
+                      node={el}
+                      highlight={this.props.highlight}
                       selected={selected}
-                      isOpen={node.isOpen}
+                      isOpen={el.isOpen}
                       updateSelected={this.updateSelected}/>
           })
         }
       </ul>
     )
   }
+}
+
+NodeTree.propTypes = {
+  nodes: PropTypes.arrayOf(PropTypes.instanceOf(Node)).isRequired,
+  isLoading: PropTypes.bool,
+  highlight: PropTypes.bool,
+  keyboard: PropTypes.bool,
+  selected: PropTypes.instanceOf(Node),
 }

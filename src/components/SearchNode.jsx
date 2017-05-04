@@ -1,5 +1,7 @@
-import React, {Component} from 'react'
 import _ from 'lodash'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types';
+
 
 export default class SearchNode extends Component {
   constructor(props) {
@@ -30,4 +32,8 @@ export default class SearchNode extends Component {
       </div>
     )
   }
+}
+
+SearchNode.PropTypes = {
+  makeSearch: PropTypes.func.isRequired
 }
