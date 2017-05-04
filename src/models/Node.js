@@ -37,11 +37,6 @@ function genNodeMenu(data, path="") {
   return menu
 }
 
-function getNthChild(node, n) {
-  return node.childs[n]
-}
-
-
 function updateNodeWithId(nodes, node, new_state) {
   const path = node.path.split('.').map(el => parseInt(el, 10)).filter(el => !isNaN(el))
   let original_node = nodes[path[0]]
@@ -51,8 +46,42 @@ function updateNodeWithId(nodes, node, new_state) {
   Object.assign(original_node, new_state)
 }
 
+function dfsSearch(nodes, text) {
+  let data = []
+  for (let node of nodes) {
+    if (node.title.search(text) !== -1) {
+      data.push(node)
+    }
+    if (node.childs.length) {
+      data.push(...dfsSearch(node.childs, text))
+    }
+  }
+  return data
+}
+
+function buildListLinks(nodes) {
+  let new_list = []
+  for (let node of nodes) {
+    let new_node = new Node({...node})
+    new_node.childs = []
+    new_node.nextNode = null
+    new_node.prevNode = null
+    new_node.parentNode = null
+    new_list.push(new_node)
+  }
+  return new_list
+}
+
+function findNodesByText(nodes, text) {
+  console.log(new Date())
+  const f = buildListLinks(dfsSearch(nodes, text))
+  console.log(new Date())
+  return f
+}
+
 export {
   Node,
   genNodeMenu,
   updateNodeWithId,
+  findNodesByText
 }

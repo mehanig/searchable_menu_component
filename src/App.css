@@ -118,17 +118,45 @@ body {
   font-family: "Gotham SSm A", "Gotham SSm B";
 }
 
+.search-node {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.search-node > input {
+  margin: 0;
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+  background: 0 0;
+  border: 0;
+  color: #343434;
+  font-size: 12px;
+  line-height: 14px;
+  outline: 0;
+  vertical-align: top;
+}
+
+.searchable-menu {
+  width:226px;
+  display: flex;
+  margin: auto;
+  margin-top: 20px;
+  flex-direction: column;
+}
+
 .node-tree {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 100px;
 }
 
 .node-tree__main {
   width:226px;
   display: flex;
   margin: auto;
+  padding-left: 0;
   flex-direction: column;
 }
 

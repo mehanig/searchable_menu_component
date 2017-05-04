@@ -22,7 +22,7 @@ export default class NodeElement extends Component {
   }
 
   render() {
-    const {isOpen} = this.state.node
+    const {isOpen, childs} = this.state.node
     let classNameHeader = 'node-tree__node-header'
     if (this.state.selected && this.state.selected.id === this.state.node.id) {
       classNameHeader += ' selected'
@@ -33,16 +33,16 @@ export default class NodeElement extends Component {
     return (
       <li className="node-tree__node">
         <div className={classNameHeader} onClick={this.handleNodeClick}>
-          { this.state.node.childs.length ?
+          { childs.length ?
             <span className="node-tree__node-header_arrow"/>
             :
             <span className="node-tree__node-header_no-arrow"/>
           }
           <span className="node-tree__node-header_text">{this.state.node.title}</span>
-          <span className="node-tree__node-header_count">{this.state.node.childs.length ? "(" + this.state.node.childs.length + ")" : null}</span>
+          <span className="node-tree__node-header_count">{childs.length ? "(" + childs.length + ")" : null}</span>
         </div>
         <ul className="node-tree__node-childs">
-          {isOpen ? this.state.node.childs.map((el) => {
+          {isOpen && childs.length ? childs.map((el) => {
             return <NodeElement key={el.id}
                                 node={el}
                                 selected={this.state.selected}

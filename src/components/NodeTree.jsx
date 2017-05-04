@@ -1,15 +1,14 @@
 import React, {Component} from 'react'
 
-import {updateNodeWithId, genNodeMenu} from '../models/Node.js'
+import {updateNodeWithId } from '../models/Node.js'
 import NodeElement from './NodeElement'
-import menu_api from '../menu_api.json'
 
 
 export default class NodeTree extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      nodes: genNodeMenu(menu_api),
+      nodes: props.nodes,
       isLoading: false,
       selected: props.selected
     }
@@ -23,12 +22,19 @@ export default class NodeTree extends Component {
   }
 
   componentDidMount() {
-    console.log(this.refs.menu_list)
     window.addEventListener("keydown", this.keyboardHandler)
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.keyboardHandler)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      nodes: nextProps.nodes,
+      isLoading: false,
+      selected: nextProps.selected
+    })
   }
 
   keyboardHandler(e) {
@@ -87,7 +93,7 @@ export default class NodeTree extends Component {
         default:
       }
     } else {
-      console.log(document.activeElement.tagName)
+      // console.log(document.activeElement.tagName)
     }
   }
 
