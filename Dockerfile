@@ -6,8 +6,11 @@ WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app/
 RUN npm install
+RUN npm install -g serve
 
 COPY . /usr/src/app
 
-EXPOSE 3000
-CMD [ "npm", "start" ]
+RUN npm run build
+
+EXPOSE 5000
+CMD [ "serve", "-s", "build" ]
