@@ -49,7 +49,7 @@ function updateNodeWithId(nodes, node, new_state) {
 function dfsSearch(nodes, text) {
   let data = []
   for (let node of nodes) {
-    if (node.title.search(text) !== -1) {
+    if (node.title.toLowerCase().search(text.toLowerCase()) !== -1) {
       data.push(node)
     }
     if (node.childs.length) {
@@ -62,21 +62,19 @@ function dfsSearch(nodes, text) {
 function buildListLinks(nodes) {
   let new_list = []
   for (let node of nodes) {
-    let new_node = new Node({...node})
+    let new_node = new Node(node)
     new_node.childs = []
     new_node.nextNode = null
     new_node.prevNode = null
     new_node.parentNode = null
     new_list.push(new_node)
   }
+  console.log(new_list)
   return new_list
 }
 
 function findNodesByText(nodes, text) {
-  console.log(new Date())
-  const f = buildListLinks(dfsSearch(nodes, text))
-  console.log(new Date())
-  return f
+  return buildListLinks(dfsSearch(nodes, text))
 }
 
 export {

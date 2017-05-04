@@ -30,8 +30,8 @@ export default class SearchableMenu extends Component {
     const search_result = findNodesByText(this.state.nodes, input)
 
     // This is bad hack for large lists
-    if (search_result.length > 200) {
-      this.setState({search_result: search_result.slice(0, 200), slice: true, search_result_all: search_result})
+    if (search_result.length > 100) {
+      this.setState({search_result: search_result.slice(0, 100), slice: true, search_result_all: search_result})
     } else {
       this.setState({search_result: search_result})
     }

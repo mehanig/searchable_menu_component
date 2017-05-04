@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import _ from 'lodash'
 
 export default class SearchNode extends Component {
   constructor(props) {
@@ -8,24 +9,24 @@ export default class SearchNode extends Component {
       makeSearch: props.makeSearch
     }
 
-    this.keyboardHandler = this.keyboardHandler.bind(this)
     this.onSearchChange = this.onSearchChange.bind(this)
-  }
-
-  keyboardHandler(e){
-    if (e.key === 'Enter') {
-      this.state.makeSearch(this.state.input)
-    }
+    this.debouncedSearch = _.debounce(this.makeSearch, 300)
   }
 
   onSearchChange(e) {
-    this.setState({input: e.target.value});
+    const value = e.target.value
+    this.setState({input: value})
+    this.debouncedSearch()
+  }
+
+  makeSearch() {
+    this.state.makeSearch(this.state.input)
   }
 
   render() {
     return (
       <div className="search-node">
-        <input onKeyPress={this.keyboardHandler} onChange={this.onSearchChange} placeholder="Search"/>
+        <input onChange={this.onSearchChange} placeholder="Search"/>
       </div>
     )
   }

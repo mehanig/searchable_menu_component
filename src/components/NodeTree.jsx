@@ -93,7 +93,6 @@ export default class NodeTree extends Component {
         default:
       }
     } else {
-      // console.log(document.activeElement.tagName)
     }
   }
 
@@ -104,9 +103,10 @@ export default class NodeTree extends Component {
       <ul ref="menu_list" className="node-tree__main">
         {this.state.isLoading ? <div>Loading</div> :
           nodes.map((node) => {
+            const key = [node.id, "_", node.childs.length].join()
             return <NodeElement
+                      key={key}
                       node={node}
-                      key={node.id}
                       selected={selected}
                       isOpen={node.isOpen}
                       updateSelected={this.updateSelected}/>

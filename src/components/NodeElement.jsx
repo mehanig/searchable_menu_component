@@ -43,7 +43,12 @@ export default class NodeElement extends Component {
         </div>
         <ul className="node-tree__node-childs">
           {isOpen && childs.length ? childs.map((el) => {
-            return <NodeElement key={el.id}
+
+            // use custom key to force React to rerender element in search_results
+            // (search_results and menu are different to display, and
+            // menu NodeElement elements should not be reused in search result list
+            const key = [node.id, "_", node.childs.length].join()
+            return <NodeElement key={key}
                                 node={el}
                                 selected={this.state.selected}
                                 updateSelected={this.props.updateSelected}/>
