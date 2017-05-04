@@ -1,7 +1,9 @@
 class Node {
-  constructor({id, title, url}, path="") {
+  constructor({id, title, url, marked_start, marked_length}, path="") {
     this.id = id
     this.title = title
+    this.marked_start = marked_start
+    this.marked_length = marked_length
     this.url = url
     this.childs = []
     this.path = path
@@ -49,7 +51,10 @@ function updateNodeWithId(nodes, node, new_state) {
 function dfsSearch(nodes, text) {
   let data = []
   for (let node of nodes) {
-    if (node.title.toLowerCase().search(text.toLowerCase()) !== -1) {
+    const found = node.title.toLowerCase().search(text.toLowerCase())
+    if (found !== -1) {
+      node.marked_start = found
+      node.marked_length = text.length
       data.push(node)
     }
     if (node.childs.length) {
@@ -69,7 +74,6 @@ function buildListLinks(nodes) {
     new_node.parentNode = null
     new_list.push(new_node)
   }
-  console.log(new_list)
   return new_list
 }
 
