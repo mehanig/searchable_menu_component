@@ -1,3 +1,7 @@
+function isPromise(obj) {
+  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+}
+
 class Node {
   constructor({id, title, url, marked_start, marked_length}, path="") {
     this.id = id
@@ -82,6 +86,7 @@ function findNodesByText(nodes, text) {
 }
 
 export {
+  isPromise,
   Node,
   genNodeMenu,
   updateNodeWithId,

@@ -8,7 +8,14 @@ import data from './menu_api.json'
 class App extends Component {
 
   render() {
+
+    // Simulate async loading
     let nodes = genNodeMenu(data)
+    let nodesPromise = new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        resolve(nodes);
+      }, 2000);
+    })
 
     return (
       <div className="App">
@@ -16,7 +23,7 @@ class App extends Component {
           <h2>SearchableMenu Component implementation:</h2>
         </div>
         <SearchableMenu
-          nodes={nodes}
+          nodes={nodesPromise}
           highlighted={true}
           keyboarded={true}/>
       </div>

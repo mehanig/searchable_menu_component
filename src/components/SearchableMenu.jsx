@@ -2,20 +2,24 @@ import React, {Component} from 'react'
 
 import NodeTree from './NodeTree'
 import SearchNode from './SearchNode'
-import {findNodesByText, Node} from '../models/Node'
+import {findNodesByText, Node, isPromise} from '../models/Node'
 import PropTypes from 'prop-types';
 
 export default class SearchableMenu extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      nodes: props.nodes,
+    if (isPromise(props.nodes)) {
+      this.state = {
+        isLoading: true
+      }
+    } else {
+      this.state = {
+        nodes: props.nodes,
+      }
     }
-
     this.makeSearch = this.makeSearch.bind(this)
     this.scrollCapture = this.scrollCapture.bind(this)
   }
-
 
   makeSearch(input) {
     if (input === "") {
@@ -38,7 +42,14 @@ export default class SearchableMenu extends Component {
     }
   }
 
+  componentWillMount() {
+    Promise.resolve(this.props.nodes).then((nodes) => {
+      this.setState({nodes: nodes, isLoading: false})
+    })
+  }
+
   componentDidMount() {
+    // Todo: event should be attached to list element
     window.addEventListener('scroll', this.scrollCapture);
   }
 
@@ -53,13 +64,16 @@ export default class SearchableMenu extends Component {
       <div className="searchable-menu">
         <SearchNode makeSearch={this.makeSearch}/>
         <div className="node-tree" onScroll={this.scrollCapture}>
-          {this.state.search_result ?
-            <NodeTree nodes={this.state.search_result}
-                      highlight={this.props.highlighted}
-                      keyboard={this.props.keyboarded}/>
+          {this.state.isLoading ?
+            <div>Loading</div>
             :
-            <NodeTree nodes={this.state.nodes}
-                      keyboard={this.props.keyboarded}/>
+            this.state.search_result ?
+              <NodeTree nodes={this.state.search_result}
+                        highlight={this.props.highlighted}
+                        keyboard={this.props.keyboarded}/>
+              :
+              <NodeTree nodes={this.state.nodes}
+                        keyboard={this.props.keyboarded}/>
           }
         </div>
       </div>

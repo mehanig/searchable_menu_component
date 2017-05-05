@@ -53,8 +53,14 @@ export default class NodeTree extends Component {
             this.setState({selected: selected.childs[0]})
           } else if (selected.nextNode){
             this.setState({selected: selected.nextNode})
-          } else if (selected.parentNode.nextNode) {
-            this.setState({selected: selected.parentNode.nextNode})
+          } else {
+            let tmp_selected = selected.parentNode
+            while (tmp_selected && !tmp_selected.nextNode) {
+              tmp_selected = tmp_selected.parentNode
+            }
+            if (tmp_selected && tmp_selected.nextNode) {
+              this.setState({selected: tmp_selected.nextNode})
+            }
           }
           break
         case "ArrowUp":
@@ -64,8 +70,12 @@ export default class NodeTree extends Component {
             if (!selected.prevNode.isOpen) {
               this.setState({selected: selected.prevNode})
              } else {
-              const last_parent_child = selected.prevNode.childs.length - 1
-              this.setState({selected: selected.prevNode.childs[last_parent_child]})
+              let last_parent_child_id = selected.prevNode.childs.length - 1
+              let tmp_selected = selected.prevNode.childs[last_parent_child_id]
+              while (tmp_selected.isOpen) {
+                tmp_selected = tmp_selected.childs[tmp_selected.childs.length-1]
+              }
+              this.setState({selected: tmp_selected})
             }
           } else {
             if (selected.parentNode) {
