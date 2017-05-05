@@ -81,8 +81,20 @@ function buildListLinks(nodes) {
   return new_list
 }
 
+function buildPathForFlatList(nodes) {
+  if (nodes.length > 1) {
+    nodes[0].nextNode = nodes[1]
+    nodes[nodes.length-1].prevNode = nodes[nodes.length-2]
+  }
+  for (let i = 1; i < nodes.length-1; i++) {
+    nodes[i].nextNode = nodes[i+1]
+    nodes[i].prevNode = nodes[i-1]
+  }
+  return nodes
+}
+
 function findNodesByText(nodes, text) {
-  return buildListLinks(dfsSearch(nodes, text))
+  return buildPathForFlatList(buildListLinks(dfsSearch(nodes, text)))
 }
 
 export {

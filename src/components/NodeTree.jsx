@@ -43,8 +43,12 @@ export default class NodeTree extends Component {
   }
 
   keyboardHandler(e) {
+    const {nodes, selected} = this.state
+    if (document.activeElement.className === "search-node__input" &&
+        ["ArrowDown", "ArrowDown", "ArrowDown", "ArrowDown"].indexOf(e.key) !== -1) {
+      document.activeElement.blur();
+    }
     if (this.props.keyboard && document.activeElement.tagName === "BODY") {
-      const {nodes, selected} = this.state
       switch (e.key) {
         case "ArrowDown":
           if (!selected) {
@@ -105,7 +109,6 @@ export default class NodeTree extends Component {
           break
         default:
       }
-    } else {
     }
   }
 
