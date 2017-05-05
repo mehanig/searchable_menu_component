@@ -53,6 +53,10 @@ function updateNodeWithId(nodes, node, new_state) {
 }
 
 function dfsSearch(nodes, text) {
+  if (!nodes) {
+    return []
+  }
+
   let data = []
   for (let node of nodes) {
     const found = node.title.toLowerCase().search(text.toLowerCase())

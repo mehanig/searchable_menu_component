@@ -22,24 +22,28 @@ export default class SearchableMenu extends Component {
   }
 
   makeSearch(input) {
-    if (input === "") {
-      this.setState({
-        nodes: this.state.nodes,
-        slice: false,
-        search_result: null,
-        search_result_all: null
-      })
-      return
-    }
+    // if nodes is not resolved promise (state is loading), wait for it to resolve and then run search
+    // Needed to handle cases when user typed search while in loading state
+    Promise.resolve(this.props.nodes).then( () => {
+      if (input === "") {
+        this.setState({
+          nodes: this.state.nodes,
+          slice: false,
+          search_result: null,
+          search_result_all: null
+        })
+        return
+      }
 
-    const search_result = findNodesByText(this.state.nodes, input)
+      const search_result = findNodesByText(this.state.nodes, input)
 
-    // This is bad hack for large lists
-    if (search_result.length > 100) {
-      this.setState({search_result: search_result.slice(0, 100), slice: true, search_result_all: search_result})
-    } else {
-      this.setState({search_result: search_result})
-    }
+      // This is bad hack for large lists. Should not being used in production
+      if (search_result.length > 100) {
+        this.setState({search_result: search_result.slice(0, 100), slice: true, search_result_all: search_result})
+       } else {
+         this.setState({search_result: search_result})
+      }
+    });
   }
 
   componentWillMount() {
@@ -49,7 +53,6 @@ export default class SearchableMenu extends Component {
   }
 
   componentDidMount() {
-    // Todo: event should be attached to list element
     window.addEventListener('scroll', this.scrollCapture);
   }
 
@@ -65,7 +68,7 @@ export default class SearchableMenu extends Component {
         <SearchNode makeSearch={this.makeSearch}/>
         <div className="node-tree" onScroll={this.scrollCapture}>
           {this.state.isLoading ?
-            <div>Loading</div>
+            <div className="node-tree_loader">Loading</div>
             :
             this.state.search_result ?
               <NodeTree nodes={this.state.search_result}
